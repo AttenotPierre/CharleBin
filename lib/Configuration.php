@@ -62,7 +62,7 @@ class Configuration
             "compression" => "zlib",
         ],
         "expire" => [
-            "default" => "1week",
+            "default" => "1month",
         ],
         "expire_options" => [
             "5min" => 300,
@@ -109,94 +109,111 @@ class Configuration
      */
     public function __construct()
     {
-        $basePaths  = array();
-        $config     = array();
-        $configPath = getenv('CONFIG_PATH');
+        $basePaths = [];
+        $config = [];
+        $configPath = getenv("CONFIG_PATH");
         if ($configPath !== false && !empty($configPath)) {
             $basePaths[] = $configPath;
         }
-        $basePaths[] = PATH . 'cfg';
+        $basePaths[] = PATH . "cfg";
         foreach ($basePaths as $basePath) {
-            $configFile = $basePath . DIRECTORY_SEPARATOR . 'conf.php';
+            $configFile = $basePath . DIRECTORY_SEPARATOR . "conf.php";
             if (is_readable($configFile)) {
                 $config = parse_ini_file($configFile, true);
-                foreach (array('main', 'model', 'model_options') as $section) {
+                foreach (["main", "model", "model_options"] as $section) {
                     if (!array_key_exists($section, $config)) {
-                        throw new Exception(I18n::_('PrivateBin requires configuration section [%s] to be present in configuration file.', $section), 2);
+                        throw new Exception(
+                            I18n::_(
+                                "PrivateBin requires configuration section [%s] to be present in configuration file.",
+                                $section,
+                            ),
+                            2,
+                        );
                     }
                 }
                 break;
             }
         }
 
-        $opts = '_options';
+        $opts = "_options";
         foreach (self::getDefaults() as $section => $values) {
             // fill missing sections with default values
-            if (!array_key_exists($section, $config) || count($config[$section]) == 0) {
+            if (
+                !array_key_exists($section, $config) ||
+                count($config[$section]) == 0
+            ) {
                 $this->_configuration[$section] = $values;
-                if (array_key_exists('dir', $this->_configuration[$section])) {
-                    $this->_configuration[$section]['dir'] = PATH . $this->_configuration[$section]['dir'];
+                if (array_key_exists("dir", $this->_configuration[$section])) {
+                    $this->_configuration[$section]["dir"] =
+                        PATH . $this->_configuration[$section]["dir"];
                 }
                 continue;
             }
             // provide different defaults for database model
             elseif (
-                $section == 'model_options' && in_array(
-                    $this->_configuration['model']['class'],
-                    array('Database', 'privatebin_db', 'zerobin_db')
-                )
+                $section == "model_options" &&
+                in_array($this->_configuration["model"]["class"], [
+                    "Database",
+                    "privatebin_db",
+                    "zerobin_db",
+                ])
             ) {
-                $values = array(
-                    'dsn' => 'sqlite:' . PATH . 'data' . DIRECTORY_SEPARATOR . 'db.sq3',
-                    'tbl' => null,
-                    'usr' => null,
-                    'pwd' => null,
-                    'opt' => array(PDO::ATTR_PERSISTENT => true),
-                );
+                $values = [
+                    "dsn" =>
+                        "sqlite:" .
+                        PATH .
+                        "data" .
+                        DIRECTORY_SEPARATOR .
+                        "db.sq3",
+                    "tbl" => null,
+                    "usr" => null,
+                    "pwd" => null,
+                    "opt" => [PDO::ATTR_PERSISTENT => true],
+                ];
             } elseif (
-                $section == 'model_options' && in_array(
-                    $this->_configuration['model']['class'],
-                    array('GoogleCloudStorage')
-                )
+                $section == "model_options" &&
+                in_array($this->_configuration["model"]["class"], [
+                    "GoogleCloudStorage",
+                ])
             ) {
-                $values = array(
-                    'bucket'     => getenv('PRIVATEBIN_GCS_BUCKET') ? getenv('PRIVATEBIN_GCS_BUCKET') : null,
-                    'prefix'     => 'pastes',
-                    'uniformacl' => false,
-                );
+                $values = [
+                    "bucket" => getenv("PRIVATEBIN_GCS_BUCKET")
+                        ? getenv("PRIVATEBIN_GCS_BUCKET")
+                        : null,
+                    "prefix" => "pastes",
+                    "uniformacl" => false,
+                ];
             } elseif (
-                $section == 'model_options' && in_array(
-                    $this->_configuration['model']['class'],
-                    array('S3Storage')
-                )
+                $section == "model_options" &&
+                in_array($this->_configuration["model"]["class"], ["S3Storage"])
             ) {
-                $values = array(
-                    'region'                  => null,
-                    'version'                 => null,
-                    'endpoint'                => null,
-                    'accesskey'               => null,
-                    'secretkey'               => null,
-                    'use_path_style_endpoint' => null,
-                    'bucket'                  => null,
-                    'prefix'                  => '',
-                );
+                $values = [
+                    "region" => null,
+                    "version" => null,
+                    "endpoint" => null,
+                    "accesskey" => null,
+                    "secretkey" => null,
+                    "use_path_style_endpoint" => null,
+                    "bucket" => null,
+                    "prefix" => "",
+                ];
             }
 
             // "*_options" sections don't require all defaults to be set
             if (
-                $section !== 'model_options' &&
+                $section !== "model_options" &&
                 ($from = strlen($section) - strlen($opts)) >= 0 &&
                 strpos($section, $opts, $from) !== false
             ) {
                 if (is_int(current($values))) {
-                    $config[$section] = array_map('intval', $config[$section]);
+                    $config[$section] = array_map("intval", $config[$section]);
                 }
                 $this->_configuration[$section] = $config[$section];
             }
             // check for missing keys and set defaults if necessary
             else {
                 foreach ($values as $key => $val) {
-                    if ($key == 'dir') {
+                    if ($key == "dir") {
                         $val = PATH . $val;
                     }
                     $result = $val;
@@ -205,16 +222,19 @@ class Configuration
                             $result = $config[$section][$key];
                         } elseif (is_bool($val)) {
                             $val = strtolower($config[$section][$key]);
-                            if (in_array($val, array('true', 'yes', 'on'))) {
+                            if (in_array($val, ["true", "yes", "on"])) {
                                 $result = true;
-                            } elseif (in_array($val, array('false', 'no', 'off'))) {
+                            } elseif (in_array($val, ["false", "no", "off"])) {
                                 $result = false;
                             } else {
                                 $result = (bool) $config[$section][$key];
                             }
                         } elseif (is_int($val)) {
                             $result = (int) $config[$section][$key];
-                        } elseif (is_string($val) && !empty($config[$section][$key])) {
+                        } elseif (
+                            is_string($val) &&
+                            !empty($config[$section][$key])
+                        ) {
                             $result = (string) $config[$section][$key];
                         }
                     }
@@ -224,28 +244,40 @@ class Configuration
         }
 
         // support for old config file format, before the fork was renamed and PSR-4 introduced
-        $this->_configuration['model']['class'] = str_replace(
-            'zerobin_', 'privatebin_',
-            $this->_configuration['model']['class']
+        $this->_configuration["model"]["class"] = str_replace(
+            "zerobin_",
+            "privatebin_",
+            $this->_configuration["model"]["class"],
         );
 
-        $this->_configuration['model']['class'] = str_replace(
-            array('privatebin_data', 'privatebin_db'),
-            array('Filesystem', 'Database'),
-            $this->_configuration['model']['class']
+        $this->_configuration["model"]["class"] = str_replace(
+            ["privatebin_data", "privatebin_db"],
+            ["Filesystem", "Database"],
+            $this->_configuration["model"]["class"],
         );
 
         // ensure a valid expire default key is set
-        if (!array_key_exists($this->_configuration['expire']['default'], $this->_configuration['expire_options'])) {
-            $this->_configuration['expire']['default'] = key($this->_configuration['expire_options']);
+        if (
+            !array_key_exists(
+                $this->_configuration["expire"]["default"],
+                $this->_configuration["expire_options"],
+            )
+        ) {
+            $this->_configuration["expire"]["default"] = key(
+                $this->_configuration["expire_options"],
+            );
         }
 
         // ensure the basepath ends in a slash, if one is set
         if (
-            strlen($this->_configuration['main']['basepath']) &&
-            substr_compare($this->_configuration['main']['basepath'], '/', -1) !== 0
+            strlen($this->_configuration["main"]["basepath"]) &&
+            substr_compare(
+                $this->_configuration["main"]["basepath"],
+                "/",
+                -1,
+            ) !== 0
         ) {
-            $this->_configuration['main']['basepath'] .= '/';
+            $this->_configuration["main"]["basepath"] .= "/";
         }
     }
 
@@ -277,11 +309,14 @@ class Configuration
      * @throws Exception
      * @return mixed
      */
-    public function getKey($key, $section = 'main')
+    public function getKey($key, $section = "main")
     {
         $options = $this->getSection($section);
         if (!array_key_exists($key, $options)) {
-            throw new Exception(I18n::_('Invalid data.') . " $section / $key", 4);
+            throw new Exception(
+                I18n::_("Invalid data.") . " $section / $key",
+                4,
+            );
         }
         return $this->_configuration[$section][$key];
     }
@@ -296,7 +331,14 @@ class Configuration
     public function getSection($section)
     {
         if (!array_key_exists($section, $this->_configuration)) {
-            throw new Exception(I18n::_('%s requires configuration section [%s] to be present in configuration file.', I18n::_($this->getKey('name')), $section), 3);
+            throw new Exception(
+                I18n::_(
+                    "%s requires configuration section [%s] to be present in configuration file.",
+                    I18n::_($this->getKey("name")),
+                    $section,
+                ),
+                3,
+            );
         }
         return $this->_configuration[$section];
     }
