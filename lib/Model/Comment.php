@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -32,8 +33,7 @@ class Comment extends AbstractModel
      * @var Paste
      */
     private $_paste;
-
-    /**
+/**
      * Store the comment's data.
      *
      * @access public
@@ -58,16 +58,8 @@ class Comment extends AbstractModel
         }
 
         $this->_data['meta']['created'] = time();
-
-        // store comment
-        if (
-            $this->_store->createComment(
-                $pasteid,
-                $this->getParentId(),
-                $this->getId(),
-                $this->_data
-            ) === false
-        ) {
+// store comment
+        if ($this->_store->createComment($pasteid, $this->getParentId(), $this->getId(), $this->_data) === false) {
             throw new Exception('Error saving comment. Sorry.', 70);
         }
     }
@@ -91,11 +83,7 @@ class Comment extends AbstractModel
      */
     public function exists()
     {
-        return $this->_store->existsComment(
-            $this->getPaste()->getId(),
-            $this->getParentId(),
-            $this->getId()
-        );
+        return $this->_store->existsComment($this->getPaste()->getId(), $this->getParentId(), $this->getId());
     }
 
     /**
@@ -170,19 +158,17 @@ class Comment extends AbstractModel
                 $pngdata   = $identicon->getImageDataUri($hmac, 16);
             } elseif ($icon == 'jdenticon') {
                 $jdenticon = new Jdenticon(array(
-                    'hash'  => $hmac,
-                    'size'  => 16,
-                    'style' => array(
-                        'backgroundColor'   => '#fff0', // fully transparent, for dark mode
-                        'padding'           => 0,
-                    ),
+                'hash'  => $hmac,
+                'size'  => 16,
+                'style' => array(
+                    'backgroundColor'   => '#fff0', // fully transparent, for dark mode
+                    'padding'           => 0,
+                ),
                 ));
                 $pngdata   = $jdenticon->getImageDataUri('png');
             } elseif ($icon == 'vizhash') {
                 $vh      = new Vizhash16x16();
-                $pngdata = 'data:image/png;base64,' . base64_encode(
-                    $vh->generate($hmac)
-                );
+                $pngdata = 'data:image/png;base64,' . base64_encode($vh->generate($hmac));
             }
             if ($pngdata != '') {
                 if (!array_key_exists('meta', $data)) {

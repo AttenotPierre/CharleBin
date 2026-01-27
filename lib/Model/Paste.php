@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -58,7 +59,7 @@ class Paste extends AbstractModel
 
         // set formatter for the view in version 1 pastes.
         if (array_key_exists('data', $data) && !array_key_exists('formatter', $data['meta'])) {
-            // support < 0.21 syntax highlighting
+// support < 0.21 syntax highlighting
             if (array_key_exists('syntaxcoloring', $data['meta']) && $data['meta']['syntaxcoloring'] === true) {
                 $data['meta']['formatter'] = 'syntaxhighlighting';
             } else {
@@ -75,7 +76,6 @@ class Paste extends AbstractModel
         $data['comment_offset'] = 0;
         $data['@context']       = '?jsonld=paste';
         $this->_data            = $data;
-
         return $this->_data;
     }
 
@@ -94,14 +94,8 @@ class Paste extends AbstractModel
 
         $this->_data['meta']['created'] = time();
         $this->_data['meta']['salt']    = ServerSalt::generate();
-
-        // store paste
-        if (
-            $this->_store->create(
-                $this->getId(),
-                $this->_data
-            ) === false
-        ) {
+// store paste
+        if ($this->_store->create($this->getId(), $this->_data) === false) {
             throw new Exception('Error saving paste. Sorry.', 76);
         }
     }
@@ -177,11 +171,7 @@ class Paste extends AbstractModel
         if (!array_key_exists('salt', $this->_data['meta'])) {
             $this->get();
         }
-        return hash_hmac(
-            $this->_conf->getKey('zerobincompatibility') ? 'sha1' : 'sha256',
-            $this->getId(),
-            $this->_data['meta']['salt']
-        );
+        return hash_hmac($this->_conf->getKey('zerobincompatibility') ? 'sha1' : 'sha256', $this->getId(), $this->_data['meta']['salt']);
     }
 
     /**
@@ -216,7 +206,7 @@ class Paste extends AbstractModel
         if (array_key_exists($expiration, $expire_options)) {
             $expire = $expire_options[$expiration];
         } else {
-            // using getKey() to ensure a default value is present
+        // using getKey() to ensure a default value is present
             $expire = $this->_conf->getKey($this->_conf->getKey('default', 'expire'), 'expire_options');
         }
         if ($expire > 0) {

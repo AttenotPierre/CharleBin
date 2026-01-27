@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -30,32 +31,28 @@ abstract class AbstractModel
      * @var string
      */
     protected $_id = '';
-
-    /**
+/**
      * Instance data.
      *
      * @access protected
      * @var array
      */
     protected $_data = array('meta' => array());
-
-    /**
+/**
      * Configuration.
      *
      * @access protected
      * @var Configuration
      */
     protected $_conf;
-
-    /**
+/**
      * Data storage.
      *
      * @access protected
      * @var AbstractData
      */
     protected $_store;
-
-    /**
+/**
      * Instance constructor.
      *
      * @access public
@@ -106,8 +103,7 @@ abstract class AbstractModel
         $data = $this->_sanitize($data);
         $this->_validate($data);
         $this->_data = $data;
-
-        // calculate a 64 bit checksum to avoid collisions
+// calculate a 64 bit checksum to avoid collisions
         $this->setId(hash(version_compare(PHP_VERSION, '5.6', '<') ? 'fnv164' : 'fnv1a64', $data['ct']));
     }
 
@@ -129,24 +125,21 @@ abstract class AbstractModel
      * @throws Exception
      */
     abstract public function store();
-
-    /**
+/**
      * Delete the current instance.
      *
      * @access public
      * @throws Exception
      */
     abstract public function delete();
-
-    /**
+/**
      * Test if current instance exists in store.
      *
      * @access public
      * @return bool
      */
     abstract public function exists();
-
-    /**
+/**
      * Validate ID.
      *
      * @access public

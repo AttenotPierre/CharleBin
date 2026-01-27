@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -27,54 +28,47 @@ class Request
      * @const string
      */
     const MIME_JSON = 'application/json';
-
-    /**
+/**
      * MIME type for HTML
      *
      * @const string
      */
     const MIME_HTML = 'text/html';
-
-    /**
+/**
      * MIME type for XHTML
      *
      * @const string
      */
     const MIME_XHTML = 'application/xhtml+xml';
-
-    /**
+/**
      * Input stream to use for PUT parameter parsing
      *
      * @access private
      * @var string
      */
     private static $_inputStream = 'php://input';
-
-    /**
+/**
      * Operation to perform
      *
      * @access private
      * @var string
      */
     private $_operation = 'view';
-
-    /**
+/**
      * Request parameters
      *
      * @access private
      * @var array
      */
     private $_params = array();
-
-    /**
+/**
      * If we are in a JSON API context
      *
      * @access private
      * @var bool
      */
     private $_isJsonApi = false;
-
-    /**
+/**
      * Return the paste ID of the current paste.
      *
      * @access private
@@ -84,9 +78,8 @@ class Request
     {
         // RegEx to check for valid paste ID (16 base64 chars)
         $pasteIdRegEx = '/^[a-f0-9]{16}$/';
-
         foreach ($_GET as $key => $value) {
-            // only return if value is empty and key matches RegEx
+        // only return if value is empty and key matches RegEx
             if (($value === '') and preg_match($pasteIdRegEx, $key, $match)) {
                 return $match[0];
             }
@@ -104,24 +97,23 @@ class Request
     {
         // decide if we are in JSON API or HTML context
         $this->_isJsonApi = $this->_detectJsonRequest();
-
-        // parse parameters, depending on request type
+// parse parameters, depending on request type
         switch (array_key_exists('REQUEST_METHOD', $_SERVER) ? $_SERVER['REQUEST_METHOD'] : 'GET') {
             case 'DELETE':
             case 'PUT':
             case 'POST':
                 // it might be a creation or a deletion, the latter is detected below
+
                 $this->_operation = 'create';
                 try {
-                    $this->_params = Json::decode(
-                        file_get_contents(self::$_inputStream)
-                    );
+                    $this->_params = Json::decode(file_get_contents(self::$_inputStream));
                 } catch (Exception $e) {
-                    // ignore error, $this->_params will remain empty
+                // ignore error, $this->_params will remain empty
                 }
+
                 break;
             default:
-                $this->_params = $_GET;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 $this->_params = $_GET;
         }
         if (
             !array_key_exists('pasteid', $this->_params) &&
@@ -223,9 +215,7 @@ class Request
     public function getRequestUri()
     {
         return array_key_exists('REQUEST_URI', $_SERVER) ?
-        htmlspecialchars(
-            parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
-            ) : '/';
+        htmlspecialchars(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) : '/';
     }
 
     /**
@@ -261,8 +251,7 @@ class Request
     {
         $hasAcceptHeader = array_key_exists('HTTP_ACCEPT', $_SERVER);
         $acceptHeader    = $hasAcceptHeader ? $_SERVER['HTTP_ACCEPT'] : '';
-
-        // simple cases
+// simple cases
         if (
             (array_key_exists('HTTP_X_REQUESTED_WITH', $_SERVER) &&
                 $_SERVER['HTTP_X_REQUESTED_WITH'] == 'JSONHttpRequest') ||
@@ -279,10 +268,13 @@ class Request
         if ($hasAcceptHeader) {
             $mediaTypeRanges = explode(',', trim($acceptHeader));
             foreach ($mediaTypeRanges as $mediaTypeRange) {
-                if (preg_match(
-                    '#(\*/\*|[a-z\-]+/[a-z\-+*]+(?:\s*;\s*[^q]\S*)*)(?:\s*;\s*q\s*=\s*(0(?:\.\d{0,3})|1(?:\.0{0,3})))?#',
-                    trim($mediaTypeRange), $match
-                )) {
+                if (
+                    preg_match(
+                        '#(\*/\*|[a-z\-]+/[a-z\-+*]+(?:\s*;\s*[^q]\S*)*)(?:\s*;\s*q\s*=\s*(0(?:\.\d{0,3})|1(?:\.0{0,3})))?#',
+                        trim($mediaTypeRange),
+                        $match
+                    )
+                ) {
                     if (!isset($match[2])) {
                         $match[2] = '1.0';
                     } else {

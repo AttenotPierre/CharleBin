@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -39,13 +40,15 @@ class Filter
         }
         switch ($matches[2]) {
             case 'sec':
-                $unit = 'second';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   $unit = 'second';
+
                 break;
             case 'min':
-                $unit = 'minute';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   $unit = 'minute';
+
                 break;
             default:
-                $unit = rtrim($matches[2], 's');
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   $unit = rtrim($matches[2], 's');
         }
         return I18n::_(array('%d ' . $unit, '%d ' . $unit . 's'), (int) $matches[1]);
     }

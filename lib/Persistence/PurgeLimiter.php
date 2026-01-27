@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -29,8 +30,7 @@ class PurgeLimiter extends AbstractPersistence
      * @var    int
      */
     private static $_limit = 300;
-
-    /**
+/**
      * set the time limit in seconds
      *
      * @access public

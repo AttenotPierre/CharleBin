@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -32,24 +33,21 @@ class Database extends AbstractData
      * @var PDO
      */
     private $_db;
-
-    /**
+/**
      * table prefix
      *
      * @access private
      * @var string
      */
     private $_prefix = '';
-
-    /**
+/**
      * database type
      *
      * @access private
      * @var string
      */
     private $_type = '';
-
-    /**
+/**
      * instantiates a new Database data backend
      *
      * @access public
@@ -71,33 +69,23 @@ class Database extends AbstractData
             array_key_exists('pwd', $options) &&
             array_key_exists('opt', $options)
         ) {
-            // set default options
+// set default options
             $options['opt'][PDO::ATTR_ERRMODE]          = PDO::ERRMODE_EXCEPTION;
             $options['opt'][PDO::ATTR_EMULATE_PREPARES] = false;
             $options['opt'][PDO::ATTR_PERSISTENT]       = true;
             $db_tables_exist                            = true;
-
-            // setup type and dabase connection
-            $this->_type = strtolower(
-                substr($options['dsn'], 0, strpos($options['dsn'], ':'))
-            );
-            // MySQL uses backticks to quote identifiers by default,
+// setup type and dabase connection
+            $this->_type = strtolower(substr($options['dsn'], 0, strpos($options['dsn'], ':')));
+// MySQL uses backticks to quote identifiers by default,
             // tell it to expect ANSI SQL double quotes
             if ($this->_type === 'mysql' && defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
                 $options['opt'][PDO::MYSQL_ATTR_INIT_COMMAND] = "SET SESSION sql_mode='ANSI_QUOTES'";
             }
             $tableQuery = $this->_getTableQuery($this->_type);
-            $this->_db  = new PDO(
-                $options['dsn'],
-                $options['usr'],
-                $options['pwd'],
-                $options['opt']
-            );
-
-            // check if the database contains the required tables
+            $this->_db  = new PDO($options['dsn'], $options['usr'], $options['pwd'], $options['opt']);
+// check if the database contains the required tables
             $tables = $this->_db->query($tableQuery)->fetchAll(PDO::FETCH_COLUMN, 0);
-
-            // create paste table if necessary
+// create paste table if necessary
             if (!in_array($this->_sanitizeIdentifier('paste'), $tables)) {
                 $this->_createPasteTable();
                 $db_tables_exist = false;
@@ -113,7 +101,7 @@ class Database extends AbstractData
             $db_version = Controller::VERSION;
             if (!in_array($this->_sanitizeIdentifier('config'), $tables)) {
                 $this->_createConfigTable();
-                // if we only needed to create the config table, the DB is older then 0.22
+            // if we only needed to create the config table, the DB is older then 0.22
                 if ($db_tables_exist) {
                     $db_version = '0.21';
                 }
@@ -127,7 +115,8 @@ class Database extends AbstractData
             }
         } else {
             throw new Exception(
-                'Missing configuration for key dsn, usr, pwd or opt in the section model_options, please check your configuration file', 6
+                'Missing configuration for key dsn, usr, pwd or opt in the section model_options, please check your configuration file',
+                6
             );
         }
     }
@@ -176,10 +165,8 @@ class Database extends AbstractData
             $burnafterreading = $paste['adata'][3];
         }
         try {
-            return $this->_exec(
-                'INSERT INTO "' . $this->_sanitizeIdentifier('paste') .
-                '" VALUES(?,?,?,?,?,?,?,?,?)',
-                array(
+            return $this->_exec('INSERT INTO "' . $this->_sanitizeIdentifier('paste') .
+                '" VALUES(?,?,?,?,?,?,?,?,?)', array(
                     $pasteid,
                     $isVersion1 ? $paste['data'] : Json::encode($paste),
                     $created,
@@ -189,8 +176,7 @@ class Database extends AbstractData
                     Json::encode($meta),
                     $attachment,
                     $attachmentname,
-                )
-            );
+                ));
         } catch (Exception $e) {
             return false;
         }
@@ -208,7 +194,9 @@ class Database extends AbstractData
         try {
             $row = $this->_select(
                 'SELECT * FROM "' . $this->_sanitizeIdentifier('paste') .
-                '" WHERE "dataid" = ?', array($pasteid), true
+                '" WHERE "dataid" = ?',
+                array($pasteid),
+                true
             );
         } catch (Exception $e) {
             $row = false;
@@ -270,11 +258,13 @@ class Database extends AbstractData
     {
         $this->_exec(
             'DELETE FROM "' . $this->_sanitizeIdentifier('paste') .
-            '" WHERE "dataid" = ?', array($pasteid)
+            '" WHERE "dataid" = ?',
+            array($pasteid)
         );
         $this->_exec(
             'DELETE FROM "' . $this->_sanitizeIdentifier('comment') .
-            '" WHERE "pasteid" = ?', array($pasteid)
+            '" WHERE "pasteid" = ?',
+            array($pasteid)
         );
     }
 
@@ -290,7 +280,9 @@ class Database extends AbstractData
         try {
             $row = $this->_select(
                 'SELECT "dataid" FROM "' . $this->_sanitizeIdentifier('paste') .
-                '" WHERE "dataid" = ?', array($pasteid), true
+                '" WHERE "dataid" = ?',
+                array($pasteid),
+                true
             );
         } catch (Exception $e) {
             return false;
@@ -326,10 +318,8 @@ class Database extends AbstractData
             }
         }
         try {
-            return $this->_exec(
-                'INSERT INTO "' . $this->_sanitizeIdentifier('comment') .
-                '" VALUES(?,?,?,?,?,?,?)',
-                array(
+            return $this->_exec('INSERT INTO "' . $this->_sanitizeIdentifier('comment') .
+                '" VALUES(?,?,?,?,?,?,?)', array(
                     $commentid,
                     $pasteid,
                     $parentid,
@@ -337,8 +327,7 @@ class Database extends AbstractData
                     $meta['nickname'],
                     $meta[$iconKey],
                     $meta[$createdKey],
-                )
-            );
+                ));
         } catch (Exception $e) {
             return false;
         }
@@ -355,10 +344,10 @@ class Database extends AbstractData
     {
         $rows = $this->_select(
             'SELECT * FROM "' . $this->_sanitizeIdentifier('comment') .
-            '" WHERE "pasteid" = ?', array($pasteid)
+            '" WHERE "pasteid" = ?',
+            array($pasteid)
         );
-
-        // create comment list
+// create comment list
         $comments = array();
         if (is_array($rows) && count($rows)) {
             foreach ($rows as $row) {
@@ -401,7 +390,8 @@ class Database extends AbstractData
             return (bool) $this->_select(
                 'SELECT "dataid" FROM "' . $this->_sanitizeIdentifier('comment') .
                 '" WHERE "pasteid" = ? AND "parentid" = ? AND "dataid" = ?',
-                array($pasteid, $parentid, $commentid), true
+                array($pasteid, $parentid, $commentid),
+                true
             );
         } catch (Exception $e) {
             return false;
@@ -427,11 +417,8 @@ class Database extends AbstractData
                 return false;
             }
         }
-        return $this->_exec(
-            'UPDATE "' . $this->_sanitizeIdentifier('config') .
-            '" SET "value" = ? WHERE "id" = ?',
-            array($value, strtoupper($namespace))
-        );
+        return $this->_exec('UPDATE "' . $this->_sanitizeIdentifier('config') .
+            '" SET "value" = ? WHERE "id" = ?', array($value, strtoupper($namespace)));
     }
 
     /**
@@ -447,15 +434,11 @@ class Database extends AbstractData
         $configKey = strtoupper($namespace);
         $value     = $this->_getConfig($configKey);
         if ($value === '') {
-            // initialize the row, so that setValue can rely on UPDATE queries
-            $this->_exec(
-                'INSERT INTO "' . $this->_sanitizeIdentifier('config') .
-                '" VALUES(?,?)',
-                array($configKey, '')
-            );
-
-            // migrate filesystem based salt into database
-            $file = 'data' . DIRECTORY_SEPARATOR . 'salt.php';
+        // initialize the row, so that setValue can rely on UPDATE queries
+            $this->_exec('INSERT INTO "' . $this->_sanitizeIdentifier('config') .
+                '" VALUES(?,?)', array($configKey, ''));
+        // migrate filesystem based salt into database
+                    $file = 'data' . DIRECTORY_SEPARATOR . 'salt.php';
             if ($namespace === 'salt' && is_readable($file)) {
                 $fs    = new Filesystem(array('dir' => 'data'));
                 $value = $fs->getValue('salt');
@@ -486,11 +469,9 @@ class Database extends AbstractData
      */
     protected function _getExpiredPastes($batchsize)
     {
-        $statement = $this->_db->prepare(
-            'SELECT "dataid" FROM "' . $this->_sanitizeIdentifier('paste') .
+        $statement = $this->_db->prepare('SELECT "dataid" FROM "' . $this->_sanitizeIdentifier('paste') .
             '" WHERE "expiredate" < ? AND "expiredate" != ? ' .
-            ($this->_type === 'oci' ? 'FETCH NEXT ? ROWS ONLY' : 'LIMIT ?')
-        );
+            ($this->_type === 'oci' ? 'FETCH NEXT ? ROWS ONLY' : 'LIMIT ?'));
         $statement->execute(array(time(), 0, $batchsize));
         return $statement->fetchAll(PDO::FETCH_COLUMN, 0);
     }
@@ -500,9 +481,7 @@ class Database extends AbstractData
      */
     public function getAllPastes()
     {
-        return $this->_db->query(
-            'SELECT "dataid" FROM "' . $this->_sanitizeIdentifier('paste') . '"'
-        )->fetchAll(PDO::FETCH_COLUMN, 0);
+        return $this->_db->query('SELECT "dataid" FROM "' . $this->_sanitizeIdentifier('paste') . '"')->fetchAll(PDO::FETCH_COLUMN, 0);
     }
 
     /**
@@ -549,7 +528,7 @@ class Database extends AbstractData
         if ($firstOnly) {
             $result = $statement->fetch(PDO::FETCH_ASSOC);
         } elseif ($this->_type === 'oci') {
-            // workaround for https://bugs.php.net/bug.php?id=46728
+        // workaround for https://bugs.php.net/bug.php?id=46728
             $result = array();
             while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                 $result[] = array_map('PrivateBin\Data\Database::_sanitizeClob', $row);
@@ -559,7 +538,7 @@ class Database extends AbstractData
         }
         $statement->closeCursor();
         if ($this->_type === 'oci' && is_array($result)) {
-            // returned CLOB values are streams, convert these into strings
+        // returned CLOB values are streams, convert these into strings
             $result = $firstOnly ?
                 array_map('PrivateBin\Data\Database::_sanitizeClob', $result) :
                 $result;
@@ -594,24 +573,30 @@ class Database extends AbstractData
     {
         switch ($type) {
             case 'ibm':
-                $sql = 'SELECT "tabname" FROM "SYSCAT"."TABLES"';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             $sql = 'SELECT "tabname" FROM "SYSCAT"."TABLES"';
+
                 break;
             case 'informix':
-                $sql = 'SELECT "tabname" FROM "systables"';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             $sql = 'SELECT "tabname" FROM "systables"';
+
                 break;
             case 'mssql':
                 // U: tables created by the user
-                $sql = 'SELECT "name" FROM "sysobjects" '
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             $sql = 'SELECT "name" FROM "sysobjects" '
                      . 'WHERE "type" = \'U\' ORDER BY "name"';
+
                 break;
             case 'mysql':
-                $sql = 'SHOW TABLES';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             $sql = 'SHOW TABLES';
+
                 break;
             case 'oci':
-                $sql = 'SELECT table_name FROM all_tables';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             $sql = 'SELECT table_name FROM all_tables';
+
                 break;
             case 'pgsql':
-                $sql = 'SELECT c."relname" AS "table_name" '
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             $sql = 'SELECT c."relname" AS "table_name" '
                      . 'FROM "pg_class" c, "pg_user" u '
                      . 'WHERE c."relowner" = u."usesysid" AND c."relkind" = \'r\' '
                      . 'AND NOT EXISTS (SELECT 1 FROM "pg_views" WHERE "viewname" = c."relname") '
@@ -623,15 +608,18 @@ class Database extends AbstractData
                      . 'AND NOT EXISTS (SELECT 1 FROM "pg_views" WHERE "viewname" = c."relname") '
                      . 'AND NOT EXISTS (SELECT 1 FROM "pg_user" WHERE "usesysid" = c."relowner") '
                      . "AND c.\"relname\" !~ '^pg_'";
+
                 break;
             case 'sqlite':
-                $sql = 'SELECT "name" FROM "sqlite_master" WHERE "type"=\'table\' '
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             $sql = 'SELECT "name" FROM "sqlite_master" WHERE "type"=\'table\' '
                      . 'UNION ALL SELECT "name" FROM "sqlite_temp_master" '
                      . 'WHERE "type"=\'table\' ORDER BY "name"';
+
                 break;
             default:
                 throw new Exception(
-                    "PDO type $type is currently not supported.", 5
+                    "PDO type $type is currently not supported.",
+                    5
                 );
         }
         return $sql;
@@ -649,7 +637,9 @@ class Database extends AbstractData
         try {
             $row = $this->_select(
                 'SELECT "value" FROM "' . $this->_sanitizeIdentifier('config') .
-                '" WHERE "id" = ?', array($key), true
+                '" WHERE "id" = ?',
+                array($key),
+                true
             );
         } catch (PDOException $e) {
             return '';
@@ -671,9 +661,11 @@ class Database extends AbstractData
             case 'mysql':
             case 'oci':
                 $after_key = ", PRIMARY KEY (\"$key\")";
+
                 break;
             default:
-                $main_key = ' PRIMARY KEY';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                $main_key = ' PRIMARY KEY';
+
                 break;
         }
         return array($main_key, $after_key);
@@ -748,8 +740,7 @@ class Database extends AbstractData
         $dataType                   = $this->_getDataType();
         $attachmentType             = $this->_getAttachmentType();
         $metaType                   = $this->_getMetaType();
-        $this->_db->exec(
-            'CREATE TABLE "' . $this->_sanitizeIdentifier('paste') . '" ( ' .
+        $this->_db->exec('CREATE TABLE "' . $this->_sanitizeIdentifier('paste') . '" ( ' .
             "\"dataid\" CHAR(16) NOT NULL$main_key, " .
             "\"data\" $attachmentType, " .
             '"postdate" INT, ' .
@@ -758,8 +749,7 @@ class Database extends AbstractData
             '"burnafterreading" INT, ' .
             "\"meta\" $metaType, " .
             "\"attachment\" $attachmentType, " .
-            "\"attachmentname\" $dataType$after_key )"
-        );
+            "\"attachmentname\" $dataType$after_key )");
     }
 
     /**
@@ -771,19 +761,16 @@ class Database extends AbstractData
     {
         list($main_key, $after_key) = $this->_getPrimaryKeyClauses();
         $dataType                   = $this->_getDataType();
-        $this->_db->exec(
-            'CREATE TABLE "' . $this->_sanitizeIdentifier('comment') . '" ( ' .
+        $this->_db->exec('CREATE TABLE "' . $this->_sanitizeIdentifier('comment') . '" ( ' .
             "\"dataid\" CHAR(16) NOT NULL$main_key, " .
             '"pasteid" CHAR(16), ' .
             '"parentid" CHAR(16), ' .
             "\"data\" $dataType, " .
             "\"nickname\" $dataType, " .
             "\"vizhash\" $dataType, " .
-            "\"postdate\" INT$after_key )"
-        );
+            "\"postdate\" INT$after_key )");
         if ($this->_type === 'oci') {
-            $this->_db->exec(
-                'declare
+            $this->_db->exec('declare
                     already_exists  exception;
                     columns_indexed exception;
                     pragma exception_init( already_exists, -955 );
@@ -793,15 +780,12 @@ class Database extends AbstractData
                 exception
                     when already_exists or columns_indexed then
                     NULL;
-                end;'
-            );
+                end;');
         } else {
-            // CREATE INDEX IF NOT EXISTS not supported as of Oracle MySQL <= 8.0
-            $this->_db->exec(
-                'CREATE INDEX "' .
+        // CREATE INDEX IF NOT EXISTS not supported as of Oracle MySQL <= 8.0
+            $this->_db->exec('CREATE INDEX "' .
                 $this->_sanitizeIdentifier('comment_parent') . '" ON "' .
-                $this->_sanitizeIdentifier('comment') . '" ("pasteid")'
-            );
+                $this->_sanitizeIdentifier('comment') . '" ("pasteid")');
         }
     }
 
@@ -815,15 +799,10 @@ class Database extends AbstractData
         list($main_key, $after_key) = $this->_getPrimaryKeyClauses('id');
         $charType                   = $this->_type === 'oci' ? 'VARCHAR2(16)' : 'CHAR(16)';
         $textType                   = $this->_getMetaType();
-        $this->_db->exec(
-            'CREATE TABLE "' . $this->_sanitizeIdentifier('config') .
-            "\" ( \"id\" $charType NOT NULL$main_key, \"value\" $textType$after_key )"
-        );
-        $this->_exec(
-            'INSERT INTO "' . $this->_sanitizeIdentifier('config') .
-            '" VALUES(?,?)',
-            array('VERSION', Controller::VERSION)
-        );
+        $this->_db->exec('CREATE TABLE "' . $this->_sanitizeIdentifier('config') .
+            "\" ( \"id\" $charType NOT NULL$main_key, \"value\" $textType$after_key )");
+        $this->_exec('INSERT INTO "' . $this->_sanitizeIdentifier('config') .
+            '" VALUES(?,?)', array('VERSION', Controller::VERSION));
     }
 
     /**
@@ -869,70 +848,51 @@ class Database extends AbstractData
         switch ($oldversion) {
             case '0.21':
                 // create the meta column if necessary (pre 0.21 change)
+
                 try {
-                    $this->_db->exec(
-                        'SELECT "meta" FROM "' . $this->_sanitizeIdentifier('paste') . '" ' .
-                        ($this->_type === 'oci' ? 'FETCH NEXT 1 ROWS ONLY' : 'LIMIT 1')
-                    );
+                    $this->_db->exec('SELECT "meta" FROM "' . $this->_sanitizeIdentifier('paste') . '" ' .
+                    ($this->_type === 'oci' ? 'FETCH NEXT 1 ROWS ONLY' : 'LIMIT 1'));
                 } catch (PDOException $e) {
                     $this->_db->exec('ALTER TABLE "' . $this->_sanitizeIdentifier('paste') . '" ADD COLUMN "meta" TEXT');
                 }
                 // SQLite only allows one ALTER statement at a time...
-                $this->_db->exec(
-                    'ALTER TABLE "' . $this->_sanitizeIdentifier('paste') .
-                    "\" ADD COLUMN \"attachment\" $attachmentType"
-                );
-                $this->_db->exec(
-                    'ALTER TABLE "' . $this->_sanitizeIdentifier('paste') . "\" ADD COLUMN \"attachmentname\" $dataType"
-                );
-                // SQLite doesn't support MODIFY, but it allows TEXT of similar
-                // size as BLOB, so there is no need to change it there
+                $this->_db->exec('ALTER TABLE "' . $this->_sanitizeIdentifier('paste') .
+                    "\" ADD COLUMN \"attachment\" $attachmentType");
+                $this->_db->exec('ALTER TABLE "' . $this->_sanitizeIdentifier('paste') . "\" ADD COLUMN \"attachmentname\" $dataType");
+        // SQLite doesn't support MODIFY, but it allows TEXT of similar
+                    // size as BLOB, so there is no need to change it there
                 if ($this->_type !== 'sqlite') {
-                    $this->_db->exec(
-                        'ALTER TABLE "' . $this->_sanitizeIdentifier('paste') .
-                        "\" ADD PRIMARY KEY (\"dataid\"), MODIFY COLUMN \"data\" $dataType"
-                    );
-                    $this->_db->exec(
-                        'ALTER TABLE "' . $this->_sanitizeIdentifier('comment') .
+                    $this->_db->exec('ALTER TABLE "' . $this->_sanitizeIdentifier('paste') .
+                    "\" ADD PRIMARY KEY (\"dataid\"), MODIFY COLUMN \"data\" $dataType");
+                    $this->_db->exec('ALTER TABLE "' . $this->_sanitizeIdentifier('comment') .
                         "\" ADD PRIMARY KEY (\"dataid\"), MODIFY COLUMN \"data\" $dataType, " .
-                        "MODIFY COLUMN \"nickname\" $dataType, MODIFY COLUMN \"vizhash\" $dataType"
-                    );
+                        "MODIFY COLUMN \"nickname\" $dataType, MODIFY COLUMN \"vizhash\" $dataType");
                 } else {
-                    $this->_db->exec(
-                        'CREATE UNIQUE INDEX IF NOT EXISTS "' .
+                            $this->_db->exec('CREATE UNIQUE INDEX IF NOT EXISTS "' .
                         $this->_sanitizeIdentifier('paste_dataid') . '" ON "' .
-                        $this->_sanitizeIdentifier('paste') . '" ("dataid")'
-                    );
-                    $this->_db->exec(
-                        'CREATE UNIQUE INDEX IF NOT EXISTS "' .
+                        $this->_sanitizeIdentifier('paste') . '" ("dataid")');
+                            $this->_db->exec('CREATE UNIQUE INDEX IF NOT EXISTS "' .
                         $this->_sanitizeIdentifier('comment_dataid') . '" ON "' .
-                        $this->_sanitizeIdentifier('comment') . '" ("dataid")'
-                    );
+                        $this->_sanitizeIdentifier('comment') . '" ("dataid")');
                 }
                 // CREATE INDEX IF NOT EXISTS not supported as of Oracle MySQL <= 8.0
-                $this->_db->exec(
-                    'CREATE INDEX "' .
+                $this->_db->exec('CREATE INDEX "' .
                     $this->_sanitizeIdentifier('comment_parent') . '" ON "' .
-                    $this->_sanitizeIdentifier('comment') . '" ("pasteid")'
-                );
-                // no break, continue with updates for 0.22 and later
+                    $this->_sanitizeIdentifier('comment') . '" ("pasteid")');
+        // no break, continue with updates for 0.22 and later
             case '1.3':
                 // SQLite doesn't support MODIFY, but it allows TEXT of similar
                 // size as BLOB and PostgreSQL uses TEXT, so there is no need
                 // to change it there
+
                 if ($this->_type !== 'sqlite' && $this->_type !== 'pgsql') {
-                    $this->_db->exec(
-                        'ALTER TABLE "' . $this->_sanitizeIdentifier('paste') .
-                        "\" MODIFY COLUMN \"data\" $attachmentType"
-                    );
+                    $this->_db->exec('ALTER TABLE "' . $this->_sanitizeIdentifier('paste') .
+                    "\" MODIFY COLUMN \"data\" $attachmentType");
                 }
                 // no break, continue with updates for all newer versions
             default:
-                $this->_exec(
-                    'UPDATE "' . $this->_sanitizeIdentifier('config') .
-                    '" SET "value" = ? WHERE "id" = ?',
-                    array(Controller::VERSION, 'VERSION')
-                );
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         $this->_exec('UPDATE "' . $this->_sanitizeIdentifier('config') .
+                    '" SET "value" = ? WHERE "id" = ?', array(Controller::VERSION, 'VERSION'));
         }
     }
 }

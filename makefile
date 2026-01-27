@@ -7,3 +7,5 @@ start:
 test:
 	# cd tst && ../vendor/bin/phpunit
 	./vendor/bin/phpunit tst
+lint:
+	php phpcs.phar --standard=PSR12 lib/ index.php tpl/

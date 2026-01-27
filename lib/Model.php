@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -28,15 +29,13 @@ class Model
      * @var Configuration
      */
     private $_conf;
-
-    /**
+/**
      * Data storage.
      *
      * @var Data\AbstractData
      */
     private $_store = null;
-
-    /**
+/**
      * Factory constructor.
      *
      * @param configuration $conf

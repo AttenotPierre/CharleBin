@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -29,78 +30,68 @@ class Controller
      * @const string
      */
     const VERSION = '1.5.1';
-
-    /**
+/**
      * minimal required PHP version
      *
      * @const string
      */
     const MIN_PHP_VERSION = '5.6.0';
-
-    /**
+/**
      * show the same error message if the paste expired or does not exist
      *
      * @const string
      */
     const GENERIC_ERROR = 'Paste does not exist, has expired or has been deleted.';
-
-    /**
+/**
      * configuration
      *
      * @access private
      * @var    Configuration
      */
     private $_conf;
-
-    /**
+/**
      * error message
      *
      * @access private
      * @var    string
      */
     private $_error = '';
-
-    /**
+/**
      * status message
      *
      * @access private
      * @var    string
      */
     private $_status = '';
-
-    /**
+/**
      * JSON message
      *
      * @access private
      * @var    string
      */
     private $_json = '';
-
-    /**
+/**
      * Factory of instance models
      *
      * @access private
      * @var    model
      */
     private $_model;
-
-    /**
+/**
      * request
      *
      * @access private
      * @var    request
      */
     private $_request;
-
-    /**
+/**
      * URL base
      *
      * @access private
      * @var    string
      */
     private $_urlBase;
-
-    /**
+/**
      * constructor
      *
      * initializes and runs PrivateBin
@@ -119,25 +110,26 @@ class Controller
 
         // load config from ini file, initialize required classes
         $this->_init();
-
         switch ($this->_request->getOperation()) {
             case 'create':
-                $this->_create();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            $this->_create();
+
                 break;
             case 'delete':
-                $this->_delete(
-                    $this->_request->getParam('pasteid'),
-                    $this->_request->getParam('deletetoken')
-                );
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        $this->_delete($this->_request->getParam('pasteid'), $this->_request->getParam('deletetoken'));
+
                 break;
             case 'read':
-                $this->_read($this->_request->getParam('pasteid'));
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        $this->_read($this->_request->getParam('pasteid'));
+
                 break;
             case 'jsonld':
-                $this->_jsonld($this->_request->getParam('jsonld'));
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        $this->_jsonld($this->_request->getParam('jsonld'));
+
                 return;
             case 'yourlsproxy':
-                $this->_yourlsproxy($this->_request->getParam('link'));
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        $this->_yourlsproxy($this->_request->getParam('link'));
+
                 break;
         }
 
@@ -161,15 +153,14 @@ class Controller
      */
     private function _init()
     {
-        $this->_conf    = new Configuration;
+        $this->_conf    = new Configuration();
         $this->_model   = new Model($this->_conf);
-        $this->_request = new Request;
+        $this->_request = new Request();
         $this->_urlBase = $this->_request->getRequestUri();
-
-        // set default language
+// set default language
         $lang = $this->_conf->getKey('languagedefault');
         I18n::setLanguageFallback($lang);
-        // force default language, if language selection is disabled and a default is set
+// force default language, if language selection is disabled and a default is set
         if (!$this->_conf->getKey('languageselection') && strlen($lang) == 2) {
             $_COOKIE['lang'] = $lang;
             setcookie('lang', $lang, 0, '', '', true);
@@ -219,15 +210,9 @@ class Controller
             return;
         }
         $sizelimit = $this->_conf->getKey('sizelimit');
-        // Ensure content is not too big.
+// Ensure content is not too big.
         if (strlen($data['ct']) > $sizelimit) {
-            $this->_return_message(
-                1,
-                I18n::_(
-                    'Paste is limited to %s of encrypted data.',
-                    Filter::formatHumanReadableSize($sizelimit)
-                )
-            );
+            $this->_return_message(1, I18n::_('Paste is limited to %s of encrypted data.', Filter::formatHumanReadableSize($sizelimit)));
             return;
         }
 
@@ -274,11 +259,11 @@ class Controller
         try {
             $paste = $this->_model->getPaste($dataid);
             if ($paste->exists()) {
-                // accessing this method ensures that the paste would be
+            // accessing this method ensures that the paste would be
                 // deleted if it has already expired
                 $paste->get();
                 if (hash_equals($paste->getDeleteToken(), $deletetoken)) {
-                    // Paste exists and deletion token is valid: Delete the paste.
+        // Paste exists and deletion token is valid: Delete the paste.
                     $paste->delete();
                     $this->_status = 'Paste was properly deleted.';
                 } else {
@@ -344,7 +329,7 @@ class Controller
         header('Content-Security-Policy: ' . $this->_conf->getKey('cspheader'));
         header('Cross-Origin-Resource-Policy: same-origin');
         header('Cross-Origin-Embedder-Policy: require-corp');
-        // disabled, because it prevents links from a paste to the same site to
+// disabled, because it prevents links from a paste to the same site to
         // be opened. Didn't work with `same-origin-allow-popups` either.
         // See issue https://github.com/PrivateBin/PrivateBin/issues/970 for details.
         // header('Cross-Origin-Opener-Policy: same-origin');
@@ -353,8 +338,7 @@ class Controller
         header('X-Content-Type-Options: nosniff');
         header('X-Frame-Options: deny');
         header('X-XSS-Protection: 1; mode=block');
-
-        // label all the expiration options
+// label all the expiration options
         $expire = array();
         foreach ($this->_conf->getSection('expire_options') as $time => $seconds) {
             $expire[$time] = ($seconds == 0) ? I18n::_(ucfirst($time)) : Filter::formatHumanReadableTime($time);
@@ -362,8 +346,7 @@ class Controller
 
         // translate all the formatter options
         $formatters = array_map('PrivateBin\\I18n::_', $this->_conf->getSection('formatter_options'));
-
-        // set language cookie if that functionality was enabled
+// set language cookie if that functionality was enabled
         $languageselection = '';
         if ($this->_conf->getKey('languageselection')) {
             $languageselection = I18n::getLanguage();
@@ -371,16 +354,11 @@ class Controller
         }
 
         // strip policies that are unsupported in meta tag
-        $metacspheader = str_replace(
-            array(
+        $metacspheader = str_replace(array(
                 'frame-ancestors \'none\'; ',
                 '; sandbox allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads',
-            ),
-            '',
-            $this->_conf->getKey('cspheader')
-        );
-
-        $page = new View;
+            ), '', $this->_conf->getKey('cspheader'));
+        $page = new View();
         $page->assign('CSPHEADER', $metacspheader);
         $page->assign('ERROR', I18n::_($this->_error));
         $page->assign('NAME', $this->_conf->getKey('name'));
@@ -434,11 +412,7 @@ class Controller
         $content = '{}';
         $file    = PUBLIC_PATH . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR . $type . '.jsonld';
         if (is_readable($file)) {
-            $content = str_replace(
-                '?jsonld=',
-                $this->_urlBase . '?jsonld=',
-                file_get_contents($file)
-            );
+            $content = str_replace('?jsonld=', $this->_urlBase . '?jsonld=', file_get_contents($file));
         }
 
         header('Content-type: application/ld+json');

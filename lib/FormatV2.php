@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -58,8 +59,7 @@ class FormatV2
         }
 
         $cipherParams = $isComment ? $message['adata'] : $message['adata'][0];
-
-        // Make sure some fields are base64 data:
+// Make sure some fields are base64 data:
         // - initialization vector
         if (!base64_decode($cipherParams[0], true)) {
             return false;
@@ -119,11 +119,13 @@ class FormatV2
         }
 
         // require only the key 'expire' in the metadata of pastes
-        if (!$isComment && (
+        if (
+            !$isComment && (
             count($message['meta']) === 0 ||
             !array_key_exists('expire', $message['meta']) ||
             count($message['meta']) > 1
-        )) {
+            )
+        ) {
             return false;
         }
 

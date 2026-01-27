@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -26,8 +27,7 @@ abstract class AbstractData
      * @var    array
      */
     protected $_last_cache = array();
-
-    /**
+/**
      * Create a paste.
      *
      * @access public
@@ -36,8 +36,7 @@ abstract class AbstractData
      * @return bool
      */
     abstract public function create($pasteid, array $paste);
-
-    /**
+/**
      * Read a paste.
      *
      * @access public
@@ -45,16 +44,14 @@ abstract class AbstractData
      * @return array|false
      */
     abstract public function read($pasteid);
-
-    /**
+/**
      * Delete a paste and its discussion.
      *
      * @access public
      * @param  string $pasteid
      */
     abstract public function delete($pasteid);
-
-    /**
+/**
      * Test if a paste exists.
      *
      * @access public
@@ -62,8 +59,7 @@ abstract class AbstractData
      * @return bool
      */
     abstract public function exists($pasteid);
-
-    /**
+/**
      * Create a comment in a paste.
      *
      * @access public
@@ -74,8 +70,7 @@ abstract class AbstractData
      * @return bool
      */
     abstract public function createComment($pasteid, $parentid, $commentid, array $comment);
-
-    /**
+/**
      * Read all comments of paste.
      *
      * @access public
@@ -83,8 +78,7 @@ abstract class AbstractData
      * @return array
      */
     abstract public function readComments($pasteid);
-
-    /**
+/**
      * Test if a comment exists.
      *
      * @access public
@@ -94,8 +88,7 @@ abstract class AbstractData
      * @return bool
      */
     abstract public function existsComment($pasteid, $parentid, $commentid);
-
-    /**
+/**
      * Purge outdated entries.
      *
      * @access public
@@ -124,8 +117,7 @@ abstract class AbstractData
      * @return bool
      */
     abstract public function setValue($value, $namespace, $key = '');
-
-    /**
+/**
      * Load a value.
      *
      * @access public
@@ -134,8 +126,7 @@ abstract class AbstractData
      * @return string
      */
     abstract public function getValue($namespace, $key = '');
-
-    /**
+/**
      * Returns up to batch size number of paste ids that have expired
      *
      * @access protected
@@ -143,8 +134,7 @@ abstract class AbstractData
      * @return array
      */
     abstract protected function _getExpiredPastes($batchsize);
-
-    /**
+/**
      * Perform a purge of old pastes, at most the given batchsize is deleted.
      *
      * @access public
@@ -170,8 +160,7 @@ abstract class AbstractData
      * @return array
      */
     abstract public function getAllPastes();
-
-    /**
+/**
      * Get next free slot for comment from postdate.
      *
      * @access protected

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * VizHash_GD
  *
@@ -32,32 +33,28 @@ class Vizhash16x16
      * @var    array
      */
     private $VALUES;
-
-    /**
+/**
      * index of current value
      *
      * @access private
      * @var    int
      */
     private $VALUES_INDEX;
-
-    /**
+/**
      * image width
      *
      * @access private
      * @var    int
      */
     private $width;
-
-    /**
+/**
      * image height
      *
      * @access private
      * @var    int
      */
     private $height;
-
-    /**
+/**
      * constructor
      *
      * @access public
@@ -84,22 +81,20 @@ class Vizhash16x16
         }
 
         $textlen = strlen($text);
-
-        // We convert the hash into an array of integers.
+// We convert the hash into an array of integers.
         $this->VALUES = array();
         for ($i = 0; $i < $textlen; $i = $i + 2) {
             array_push($this->VALUES, hexdec(substr($text, $i, 2)));
         }
-        $this->VALUES_INDEX = 0; // to walk the array.
+        $this->VALUES_INDEX = 0;
+// to walk the array.
 
         // Then use these integers to drive the creation of an image.
         $image = imagecreatetruecolor($this->width, $this->height);
-
         $r = $r0 = $this->getInt();
         $g = $g0 = $this->getInt();
         $b = $b0 = $this->getInt();
-
-        // First, create an image with a specific gradient background.
+// First, create an image with a specific gradient background.
         $op = 'v';
         if (($this->getInt() % 2) == 0) {
             $op = 'h';
@@ -122,7 +117,6 @@ class Vizhash16x16
         $imagedata = ob_get_contents();
         ob_end_clean();
         imagedestroy($image);
-
         return $imagedata;
     }
 
@@ -136,7 +130,8 @@ class Vizhash16x16
     {
         $v = $this->VALUES[$this->VALUES_INDEX];
         ++$this->VALUES_INDEX;
-        $this->VALUES_INDEX %= count($this->VALUES); // Warp around the array
+        $this->VALUES_INDEX %= count($this->VALUES);
+// Warp around the array
         return $v;
     }
 
@@ -214,18 +209,21 @@ class Vizhash16x16
     {
         switch ($action % 7) {
             case 0:
-                imagefilledrectangle($image, $this->getX(), $this->getY(), $this->getX(), $this->getY(), $color);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  imagefilledrectangle($image, $this->getX(), $this->getY(), $this->getX(), $this->getY(), $color);
+
                 break;
             case 1:
             case 2:
                 imagefilledellipse($image, $this->getX(), $this->getY(), $this->getX(), $this->getY(), $color);
+
                 break;
             case 3:
-                $points = array($this->getX(), $this->getY(), $this->getX(), $this->getY(), $this->getX(), $this->getY(), $this->getX(), $this->getY());
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  $points = array($this->getX(), $this->getY(), $this->getX(), $this->getY(), $this->getX(), $this->getY(), $this->getX(), $this->getY());
                 imagefilledpolygon($image, $points, 4, $color);
+
                 break;
             default:
-                $start = $this->getInt() * 360 / 256;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  $start = $this->getInt() * 360 / 256;
                 $end   = $start + $this->getInt() * 180 / 256;
                 imagefilledarc($image, $this->getX(), $this->getY(), $this->getX(), $this->getY(), $start, $end, $color, IMG_ARC_PIE);
         }

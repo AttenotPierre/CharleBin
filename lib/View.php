@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -28,8 +29,7 @@ class View
      * @var    array
      */
     private $_variables = array();
-
-    /**
+/**
      * assign variables to be used inside of the template
      *
      * @access public

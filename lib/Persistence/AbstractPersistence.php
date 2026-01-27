@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -29,8 +30,7 @@ abstract class AbstractPersistence
      * @var AbstractData
      */
     protected static $_store;
-
-    /**
+/**
      * set the path
      *
      * @access public

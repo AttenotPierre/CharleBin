@@ -1,4 +1,5 @@
 <?php
+
 /**
  * S3.php
  *
@@ -48,32 +49,28 @@ class S3Storage extends AbstractData
      * @var    S3Client
      */
     private $_client = null;
-
-    /**
+/**
      * S3 client options
      *
      * @access private
      * @var    array
      */
     private $_options = array();
-
-    /**
+/**
      * S3 bucket
      *
      * @access private
      * @var    string
      */
     private $_bucket = null;
-
-    /**
+/**
      * S3 prefix for all PrivateBin data in this bucket
      *
      * @access private
      * @var    string
      */
     private $_prefix = '';
-
-    /**
+/**
      * instantiates a new S3 data backend.
      *
      * @access public
@@ -83,7 +80,6 @@ class S3Storage extends AbstractData
     public function __construct(array $options)
     {
         $this->_options['credentials'] = array();
-
         if (is_array($options) && array_key_exists('region', $options)) {
             $this->_options['region'] = $options['region'];
         }
@@ -126,7 +122,6 @@ class S3Storage extends AbstractData
             'Bucket' => $this->_bucket,
             'Prefix' => $prefix,
         );
-
         do {
             $objectsListResponse = $this->_client->listObjects($options);
             $objects             = $objectsListResponse['Contents'] ?? array();
@@ -135,7 +130,6 @@ class S3Storage extends AbstractData
                 $options['Marker'] = $object['Key'];
             }
         } while ($objectsListResponse['IsTruncated']);
-
         return $allObjects;
     }
 
@@ -224,7 +218,6 @@ class S3Storage extends AbstractData
     public function delete($pasteid)
     {
         $name = $this->_getKey($pasteid);
-
         try {
             $comments = $this->_listAllObjects($name . '/discussion/');
             foreach ($comments as $comment) {
@@ -238,7 +231,7 @@ class S3Storage extends AbstractData
                 }
             }
         } catch (S3Exception $e) {
-            // there are no discussions associated with the paste
+        // there are no discussions associated with the paste
         }
 
         try {
@@ -247,7 +240,7 @@ class S3Storage extends AbstractData
                 'Key'    => $name,
             ));
         } catch (S3Exception $e) {
-            // ignore if already deleted
+        // ignore if already deleted
         }
     }
 
@@ -293,7 +286,7 @@ class S3Storage extends AbstractData
                 $comments[$slot]  = $body;
             }
         } catch (S3Exception $e) {
-            // no comments found
+        // no comments found
         }
         return $comments;
     }
@@ -317,7 +310,6 @@ class S3Storage extends AbstractData
             $path .= '/';
         }
         $path .= 'config/' . $namespace;
-
         try {
             foreach ($this->_listAllObjects($path) as $object) {
                 $name = $object['Key'];
@@ -329,13 +321,13 @@ class S3Storage extends AbstractData
                     'Key'    => $name,
                 ));
                 if ($head->get('Metadata') != null && array_key_exists('value', $head->get('Metadata'))) {
-                    $value = $head->get('Metadata')['value'];
+                            $value = $head->get('Metadata')['value'];
                     if (is_numeric($value) && intval($value) < $time) {
                         try {
-                            $this->_client->deleteObject(array(
+                                        $this->_client->deleteObject(array(
                                 'Bucket' => $this->_bucket,
                                 'Key'    => $name,
-                            ));
+                                                ));
                         } catch (S3Exception $e) {
                             // deleted by another instance.
                         }
@@ -343,7 +335,7 @@ class S3Storage extends AbstractData
                 }
             }
         } catch (S3Exception $e) {
-            // no objects in the bucket yet
+        // no objects in the bucket yet
         }
     }
 
@@ -442,7 +434,7 @@ class S3Storage extends AbstractData
                 }
             }
         } catch (S3Exception $e) {
-            // no objects in the bucket yet
+        // no objects in the bucket yet
         }
         return $expired;
     }
@@ -466,7 +458,7 @@ class S3Storage extends AbstractData
                 }
             }
         } catch (S3Exception $e) {
-            // no objects in the bucket yet
+        // no objects in the bucket yet
         }
         return $pastes;
     }

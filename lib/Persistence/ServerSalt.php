@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -34,8 +35,7 @@ class ServerSalt extends AbstractPersistence
      * @var    string
      */
     private static $_salt = '';
-
-    /**
+/**
      * generate a large random hexadecimal salt
      *
      * @access public

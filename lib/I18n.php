@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -27,8 +28,7 @@ class I18n
      * @var    string
      */
     protected static $_language = 'en';
-
-    /**
+/**
      * language fallback
      *
      * @access protected
@@ -36,8 +36,7 @@ class I18n
      * @var    string
      */
     protected static $_languageFallback = 'en';
-
-    /**
+/**
      * language labels
      *
      * @access protected
@@ -45,8 +44,7 @@ class I18n
      * @var    array
      */
     protected static $_languageLabels = array();
-
-    /**
+/**
      * available languages
      *
      * @access protected
@@ -54,8 +52,7 @@ class I18n
      * @var    array
      */
     protected static $_availableLanguages = array();
-
-    /**
+/**
      * path to language files
      *
      * @access protected
@@ -63,8 +60,7 @@ class I18n
      * @var    string
      */
     protected static $_path = '';
-
-    /**
+/**
      * translation cache
      *
      * @access protected
@@ -72,8 +68,7 @@ class I18n
      * @var    array
      */
     protected static $_translations = array();
-
-    /**
+/**
      * translate a string, alias for translate()
      *
      * @access public
@@ -161,8 +156,7 @@ class I18n
     public static function loadTranslations()
     {
         $availableLanguages = self::getAvailableLanguages();
-
-        // check if the lang cookie was set and that language exists
+// check if the lang cookie was set and that language exists
         if (
             array_key_exists('lang', $_COOKIE) &&
             ($key = array_search($_COOKIE['lang'], $availableLanguages)) !== false
@@ -172,15 +166,14 @@ class I18n
         // find a translation file matching the browsers language preferences
         else {
             $match = self::_getMatchingLanguage(
-                self::getBrowserLanguages(), $availableLanguages
+                self::getBrowserLanguages(),
+                $availableLanguages
             );
         }
 
         // load translations
         self::$_language     = $match;
-        self::$_translations = ($match == 'en') ? array() : Json::decode(
-            file_get_contents(self::_getPath($match . '.json'))
-        );
+        self::$_translations = ($match == 'en') ? array() : Json::decode(file_get_contents(self::_getPath($match . '.json')));
     }
 
     /**
@@ -218,10 +211,13 @@ class I18n
         if (array_key_exists('HTTP_ACCEPT_LANGUAGE', $_SERVER)) {
             $languageRanges = explode(',', trim($_SERVER['HTTP_ACCEPT_LANGUAGE']));
             foreach ($languageRanges as $languageRange) {
-                if (preg_match(
-                    '/(\*|[a-zA-Z0-9]{1,8}(?:-[a-zA-Z0-9]{1,8})*)(?:\s*;\s*q\s*=\s*(0(?:\.\d{0,3})|1(?:\.0{0,3})))?/',
-                    trim($languageRange), $match
-                )) {
+                if (
+                    preg_match(
+                        '/(\*|[a-zA-Z0-9]{1,8}(?:-[a-zA-Z0-9]{1,8})*)(?:\s*;\s*q\s*=\s*(0(?:\.\d{0,3})|1(?:\.0{0,3})))?/',
+                        trim($languageRange),
+                        $match
+                    )
+                ) {
                     if (!isset($match[2])) {
                         $match[2] = '1.0';
                     } else {
@@ -339,7 +335,7 @@ class I18n
                 return $n % 10 === 1 && $n % 100 != 11 ? 0 : ($n % 10 >= 2 && $n % 10 <= 4 && ($n % 100 < 10 || $n % 100 >= 20) ? 1 : 2);
             case 'sl':
                 return $n % 100 === 1 ? 1 : ($n % 100 === 2 ? 2 : ($n % 100 === 3 || $n % 100 === 4 ? 3 : 0));
-            // bg, ca, de, el, en, es, et, fi, hu, it, nl, no, pt
+// bg, ca, de, el, en, es, et, fi, hu, it, nl, no, pt
             default:
                 return $n !== 1 ? 1 : 0;
         }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -29,16 +30,14 @@ class YourlsProxy
      * @var    string
      */
     private $_error = '';
-
-    /**
+/**
      * shortened URL
      *
      * @access private
      * @var    string
      */
     private $_url = '';
-
-    /**
+/**
      * constructor
      *
      * initializes and runs PrivateBin
@@ -60,22 +59,20 @@ class YourlsProxy
         }
 
         $data = file_get_contents(
-            $yourls_api_url, false, stream_context_create(
-                array(
+            $yourls_api_url,
+            false,
+            stream_context_create(array(
                     'http' => array(
                         'method'  => 'POST',
                         'header'  => "Content-Type: application/x-www-form-urlencoded\r\n",
-                        'content' => http_build_query(
-                            array(
+                        'content' => http_build_query(array(
                                 'signature' => $conf->getKey('signature', 'yourls'),
                                 'format'    => 'json',
                                 'action'    => 'shorturl',
                                 'url'       => $link,
-                            )
-                        ),
+                            )),
                     ),
-                )
-            )
+                ))
         );
         try {
             $data = Json::decode($data);
