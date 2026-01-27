@@ -34,70 +34,73 @@ class Configuration
      *
      * @var array
      */
-    private static $_defaults = array(
-        'main' => array(
-            'name'                     => 'PrivateBin',
-            'basepath'                 => '',
-            'discussion'               => true,
-            'opendiscussion'           => false,
-            'password'                 => true,
-            'fileupload'               => false,
-            'burnafterreadingselected' => false,
-            'defaultformatter'         => 'plaintext',
-            'syntaxhighlightingtheme'  => '',
-            'sizelimit'                => 10485760,
-            'template'                 => 'bootstrap',
-            'info'                     => 'More information on the <a href=\'https://privatebin.info/\'>project page</a>.',
-            'notice'                   => '',
-            'languageselection'        => false,
-            'languagedefault'          => '',
-            'urlshortener'             => '',
-            'qrcode'                   => true,
-            'icon'                     => 'identicon',
-            'cspheader'                => 'default-src \'none\'; base-uri \'self\'; form-action \'none\'; manifest-src \'self\'; connect-src * blob:; script-src \'self\' \'unsafe-eval\'; style-src \'self\'; font-src \'self\'; frame-ancestors \'none\'; img-src \'self\' data: blob:; media-src blob:; object-src blob:; sandbox allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads',
-            'zerobincompatibility'     => false,
-            'httpwarning'              => true,
-            'compression'              => 'zlib',
-        ),
-        'expire' => array(
-            'default' => '1week',
-        ),
-        'expire_options' => array(
-            '5min'   => 300,
-            '10min'  => 600,
-            '1hour'  => 3600,
-            '1day'   => 86400,
-            '1week'  => 604800,
-            '1month' => 2592000,
-            '1year'  => 31536000,
-            'never'  => 0,
-        ),
-        'formatter_options' => array(
-            'plaintext'          => 'Plain Text',
-            'syntaxhighlighting' => 'Source Code',
-            'markdown'           => 'Markdown',
-        ),
-        'traffic' => array(
-            'limit'     => 10,
-            'header'    => '',
-            'exempted'  => '',
-            'creators'  => '',
-        ),
-        'purge' => array(
-            'limit'     => 300,
-            'batchsize' => 10,
-        ),
-        'model' => array(
-            'class' => 'Filesystem',
-        ),
-        'model_options' => array(
-            'dir' => 'data',
-        ),
-        'yourls' => array(
-            'signature' => '',
-            'apiurl'    => '',
-        ),
-    );
+    private static $_defaults = [
+        "main" => [
+            "name" => "PrivateBin",
+            "basepath" => "",
+            "discussion" => true,
+            "opendiscussion" => false,
+            "password" => true,
+            "fileupload" => false,
+            "burnafterreadingselected" => false,
+            "defaultformatter" => "plaintext",
+            "syntaxhighlightingtheme" => "",
+            "sizelimit" => 10485760,
+            "template" => "bootstrap",
+            "info" =>
+                'More information on the <a href=\'https://privatebin.info/\'>project page</a>.',
+            "notice" => "",
+            "languageselection" => false,
+            "languagedefault" => "fr",
+            "urlshortener" => "",
+            "qrcode" => true,
+            "icon" => "identicon",
+            "cspheader" =>
+                'default-src \'none\'; base-uri \'self\'; form-action \'none\'; manifest-src \'self\'; connect-src * blob:; script-src \'self\' \'unsafe-eval\'; style-src \'self\'; font-src \'self\'; frame-ancestors \'none\'; img-src \'self\' data: blob:; media-src blob:; object-src blob:; sandbox allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads',
+            "zerobincompatibility" => false,
+            "httpwarning" => true,
+            "compression" => "zlib",
+        ],
+        "expire" => [
+            "default" => "1week",
+        ],
+        "expire_options" => [
+            "5min" => 300,
+            "10min" => 600,
+            "30mn" => 1800,
+            "1hour" => 3600,
+            "1day" => 86400,
+            "1week" => 604800,
+            "1month" => 2592000,
+            "1year" => 31536000,
+            "never" => 0,
+        ],
+        "formatter_options" => [
+            "plaintext" => "Plain Text",
+            "syntaxhighlighting" => "Source Code",
+            "markdown" => "Markdown",
+        ],
+        "traffic" => [
+            "limit" => 10,
+            "header" => "",
+            "exempted" => "",
+            "creators" => "",
+        ],
+        "purge" => [
+            "limit" => 300,
+            "batchsize" => 10,
+        ],
+        "model" => [
+            "class" => "Filesystem",
+        ],
+        "model_options" => [
+            "dir" => "data",
+        ],
+        "yourls" => [
+            "signature" => "",
+            "apiurl" => "",
+        ],
+    ];
 
     /**
      * parse configuration file and ensure default configuration values are present
