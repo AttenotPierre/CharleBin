@@ -36,7 +36,7 @@ class Configuration
      */
     private static $_defaults = [
         "main" => [
-            "name" => "PrivateBin",
+            "name" => "CharleBin",
             "basepath" => "",
             "discussion" => true,
             "opendiscussion" => false,
