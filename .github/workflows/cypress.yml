@@ -2,14 +2,11 @@ name: Cypress Tests
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
 
 jobs:
-  cypress:
+  cypress-run:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,21 +18,14 @@ jobs:
         with:
           node-version: 18
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.0'
-
-      - name: Install PHP dependencies
-        run: composer install --ignore-platform-reqs
-
-      - name: Start PHP server
-        run: php -S localhost:8080 -t . > /dev/null 2>&1 &
-
-      - name: Install Node dependencies
+      - name: Install dependencies
         run: npm install
 
+      - name: Start PHP server
+        run: php -S localhost:8080 &
+      
       - name: Run Cypress tests
         uses: cypress-io/github-action@v6
         with:
           browser: chrome
+          base-url: http://localhost:8080
