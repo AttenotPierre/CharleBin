@@ -9,15 +9,5 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AttenotPierre/CharleBin.git"
-  },
-  "license": "ISC",
-  "author": "",
-  "type": "commonjs",
-  "main": "cypress.config.js",
-  "directories": {
-    "lib": "lib"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
