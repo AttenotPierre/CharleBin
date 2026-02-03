@@ -1,1 +1,23 @@
-cypress: 19+
+{
+  "name": "privatebin",
+  "version": "1.0.0",
+  "description": "CharleBin est une application web de type pastebin chiffré, basée sur PrivateBin. Elle permet de partager des messages de manière sécurisée, sans que le serveur n’ait connaissance du contenu stocké.",
+  "homepage": "https://github.com/AttenotPierre/CharleBin#readme",
+  "bugs": {
+    "url": "https://github.com/AttenotPierre/CharleBin/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AttenotPierre/CharleBin.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "cypress.config.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
