@@ -30,8 +30,7 @@ jobs:
         run: composer install --ignore-platform-reqs
 
       - name: Start PHP server
-        run: php -S localhost:8080 -t .
-        background: true
+        run: php -S localhost:8080 -t . > /dev/null 2>&1 &
 
       - name: Install Node dependencies
         run: npm install
